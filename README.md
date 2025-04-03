@@ -27,5 +27,18 @@ We would greatly appreciate the contributions in any form, such as bug fixes, ne
 ## Known issues (Work on progress)
 The code and the tutorial is still ongoing. The full version is coming soon. Stay tuned. Thanks!
 
+## BibTeX
+If you find this repo useful for your research, please consider citing our paper:
+
+```
+@article{qu2025automatic,
+  title={Automatic Joint Structured Pruning and Quantization for Efficient Neural Network Training and Compression},
+  author={Qu, Xiaoyi and Aponte, David and Banbury, Colby and Robinson, Daniel P and Ding, Tianyu and Koishida, Kazuhito and Zharkov, Ilya and Chen, Tianyi},
+  journal={arXiv preprint arXiv:2502.16638},
+  year={2025}
+}
+
+```
+
 
 

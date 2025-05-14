@@ -21,14 +21,11 @@ from test_qsimplevit import TestQSimpleViT
 from test_qphi2 import TestQPhi2
 from test_qvit import TestQViT
 from test_qdeit import TestQDeiT
-# from test_qswin import TestQSwin
 
 # from test_simplevit import TestSimpleViT
 # from test_vit import TestViT
 # from test_phi2 import TestPhi2
-# from test_pvt import TestPVT
 # from test_deit import TestDeiT
-# from test_swin import TestSwin
 
 OUT_DIR = './cache'
 

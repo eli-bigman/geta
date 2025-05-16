@@ -22,11 +22,6 @@ from test_qphi2 import TestQPhi2
 from test_qvit import TestQViT
 from test_qdeit import TestQDeiT
 
-# from test_simplevit import TestSimpleViT
-# from test_vit import TestViT
-# from test_phi2 import TestPhi2
-# from test_deit import TestDeiT
-
 OUT_DIR = './cache'
 
 os.makedirs(OUT_DIR, exist_ok=True)

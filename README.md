@@ -81,6 +81,9 @@ for epoch in range(max_epoch):
 oto.construct_subnet(out_dir='./')
 ```
 
+# Issues
+We are adding more information to the tutorials folder. Stay tuned. Thanks for patience.
+
 ## Instructions to contributors
 We would greatly appreciate the contributions in any form, such as bug fixes, new features and new tutorials, from our open-source community.
 

@@ -22,7 +22,7 @@ where $\mathcal{G}$ represents the set of parameter groups and $K$ represents th
 We recommend to run the framework under `pytorch>=2.0` and to use `git clone` to install.
 
 ```bash
-git clone https://github.com/tianyic/only_train_once.git
+git clone https://github.com/microsoft/geta.git
 ```
 
 ## Quick Start

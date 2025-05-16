@@ -18,14 +18,71 @@ The GETA framework features two essential modules, quantization-aware dependency
 ```
 where $\mathcal{G}$ represents the set of parameter groups and $K$ represents the target sparsity ratio and $[b_l, b_u]$ specifies the target bit width range, and $\mathcal{L}$ denotes the index set of layers that have parameterized quantization layers added. By white-box, one can explicity control the sparsity level $K$ and the bit width range $[b_l, b_u]$.
 
-## How to use this
-We will add more details to this section once the code is officially released.
+## Installation
+We recommend to run the framework under `pytorch>=2.0` and to use `git clone` to install.
+
+```bash
+git clone https://github.com/microsoft/geta.git
+```
+
+## Quick Start
+
+We provide an example of framework usage. More explained details can be found in [tutorials](./tutorials/).
+
+### Minimal usage example. 
+
+```python
+from only_train_once.quantization.quant_model import model_to_quantize_model
+from only_train_once.quantization.quant_layers import QuantizationMode
+from sanity_check.backends.vgg7 import vgg7_bn
+from only_train_once import OTO
+import torch
+
+# Create OTO instance
+model = vgg7_bn()
+model = model_to_quantize_model(model, quant_mode=QuantizationMode.WEIGHT_AND_ACTIVATION)
+dummy_input = torch.rand(1, 3, 32, 32)
+oto = OTO(model=model.cuda(), dummy_input=dummy_input.cuda())
+
+# Create GETA optimizer
+optimizer = oto.geta(
+    variant="adam",
+    lr=1e-3,
+    lr_quant=1e-3,
+    first_momentum=0.9,
+    weight_decay=1e-4,
+    target_group_sparsity=0.5,
+    start_projection_step=0 * len(trainloader),
+    projection_periods=5,
+    projection_steps=10 * len(trainloader),
+    start_pruning_step=10 * len(trainloader),
+    pruning_periods=5,
+    pruning_steps=10 * len(trainloader),
+    bit_reduction=2,
+    min_bit_wt=4,
+    max_bit_wt=16,
+)
+
+# Train the DNN as normal via GETA
+model.train()
+model.cuda()
+criterion = torch.nn.CrossEntropyLoss()
+for epoch in range(max_epoch):
+    f_avg_val = 0.0
+    for X, y in trainloader:
+        X, y = X.cuda(), y.cuda()
+        y_pred = model.forward(X)
+        f = criterion(y_pred, y)
+        optimizer.zero_grad()
+        f.backward()
+        optimizer.step()
+
+# A pruned and quantized vgg7 will be generated. 
+oto.construct_subnet(out_dir='./')
+```
 
 ## Instructions to contributors
 We would greatly appreciate the contributions in any form, such as bug fixes, new features and new tutorials, from our open-source community.
-
-## Known issues (Work on progress)
-The code and the tutorial is still ongoing. The full version is coming soon. Stay tuned. Thanks!
 
 ## BibTeX
 If you find this repo useful for your research, please consider citing our paper:
@@ -37,7 +94,6 @@ If you find this repo useful for your research, please consider citing our paper
   journal={arXiv preprint arXiv:2502.16638},
   year={2025}
 }
-
 ```
 
 

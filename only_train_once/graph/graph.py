@@ -737,8 +737,16 @@ class Graph:
                 trace_graph = torch.onnx._optimize_trace(
                     trace_graph, torch.onnx.OperatorExportTypes.ONNX
                 )
-            elif Version(torch.__version__) >= Version("1.13.0"):
+            elif Version(torch.__version__) >= Version("1.13.0") and Version(
+                torch.__version__
+            ) < Version("2.0.0"):
                 trace_graph = torch.onnx._optimize_graph(
+                    trace_graph, torch.onnx.OperatorExportTypes.ONNX
+                )
+            elif Version(torch.__version__) >= Version("2.0.0"):
+                # For PyTorch 2.0+, _optimize_graph has been removed
+                # Use the non-optimized version which is safer and doesn't affect compression
+                trace_graph = _optimize_trace_graph_no_onnx_operator(
                     trace_graph, torch.onnx.OperatorExportTypes.ONNX
                 )
             else:

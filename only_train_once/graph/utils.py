@@ -4,6 +4,17 @@ import torch._C._onnx as _C_onnx
 from torch import _C
 from torch.onnx import symbolic_helper
 from torch.onnx._globals import GLOBALS
+from packaging.version import Version
+
+# Compatibility layer for PyTorch 2.0+ where is_caffe2_aten_fallback was removed
+def _is_caffe2_aten_fallback():
+    """Fallback function for is_caffe2_aten_fallback which was removed in PyTorch 2.0+"""
+    if hasattr(symbolic_helper, 'is_caffe2_aten_fallback'):
+        return symbolic_helper.is_caffe2_aten_fallback()
+    else:
+        # For PyTorch 2.0+, this function was removed and should return False
+        # as Caffe2 backend support was deprecated and won't affect model compression
+        return False
 
 
 def _is_constant_tensor_list(node):
@@ -105,12 +116,15 @@ def _optimize_trace_graph_no_onnx_operator(
     _C._jit_pass_onnx_remove_print(graph)
     _C._jit_pass_onnx_preprocess_caffe2(graph)
 
-    symbolic_helper._quantized_ops.clear()
+    # Clear quantized ops if the attribute exists (compatibility for PyTorch 2.0+)
+    if hasattr(symbolic_helper, '_quantized_ops'):
+        symbolic_helper._quantized_ops.clear()
+    
     # Unpack quantized weights for conv and linear ops and insert into graph.
     _C._jit_pass_onnx_unpack_quantized_weights(
-        graph, params_dict, symbolic_helper.is_caffe2_aten_fallback()
+        graph, params_dict, _is_caffe2_aten_fallback()
     )
-    if symbolic_helper.is_caffe2_aten_fallback():
+    if _is_caffe2_aten_fallback():
         # Insert permutes before and after each conv op to ensure correct order.
         _C._jit_pass_onnx_quantization_insert_permutes(graph, params_dict)
 
